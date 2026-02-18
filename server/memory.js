@@ -5,10 +5,22 @@ let client = null;
 const memoryStore = {}; // In-memory fallback
 
 if (REDIS_URL) {
-  client = createClient({ url: REDIS_URL });
+  // Render Redis external URL starts with "rediss://" (TLS).
+  // The redis client handles TLS automatically for rediss:// URLs,
+  // but Render uses self-signed certs, so we disable strict cert validation.
+  const isTLS = REDIS_URL.startsWith("rediss://");
+
+  client = createClient({
+    url: REDIS_URL,
+    socket: isTLS
+      ? { tls: true, rejectUnauthorized: false }
+      : {},
+  });
+
   client.on('error', (err) => console.log('Redis Client Error', err));
+
   client.connect().catch(err => {
-    console.error("Failed to connect to Redis, falling back to in-memory storage");
+    console.error("Failed to connect to Redis, falling back to in-memory storage:", err.message);
     client = null;
   });
 } else {

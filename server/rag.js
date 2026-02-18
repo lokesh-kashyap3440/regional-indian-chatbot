@@ -48,23 +48,28 @@ async function chatHandler(sessionId, role, question, resStream) {
   const detectedLang = detectLanguage(question);
   console.log(`SESSION ${sessionId} | Detected Language: ${detectedLang} | Query: "${question.slice(0, 50)}"`);
 
+  const hasContext = contextText && contextText.trim().length > 0;
+
   const prompt = `
-You are a specialized AI assistant for multilingual question answering. Your task is to answer a user's question in their own language, using only the provided English context.
+You are a helpful multilingual AI assistant. The user's question is in ${detectedLang}.
 
-**Follow these steps carefully:**
-1.  **Analyze the User's Question:** The user's question is in ${detectedLang}: "${question}". Understand what they are asking for.
-2.  **Scan the Context:** Read the "Context" section below to find relevant information. The context is in English.
-3.  **Synthesize the Answer:** Based *only* on the English context, formulate a concise answer to the user's question.
-4.  **Translate and Respond:** Translate your synthesized answer into ${detectedLang} and provide that as the final response.
+**Your goal:** Answer the user's question accurately and helpfully in ${detectedLang}.
 
-**Strict Rules:**
--   **Use ONLY the Context:** Do not use any outside knowledge. If the answer is not in the context, you MUST say (in ${detectedLang}): "I am sorry, but the provided documents do not have information on this topic."
--   **Language Purity:** Your final response must be ONLY in ${detectedLang}. Do not include any English words or phrases, unless they are proper nouns present in the context.
--   **No PII**: Do not repeat or ask for any Personally Identifiable Information.
+**How to use the Context:**
+${hasContext
+  ? `- Relevant excerpts from uploaded documents are provided below.
+- If the answer is clearly present in the Context, use it as your PRIMARY source and base your answer on it.
+- If the Context is partially relevant, combine it with your general knowledge to give a complete answer.
+- If the Context is irrelevant to the question, ignore it and answer from your general knowledge.`
+  : `- No document context is available. Answer from your general knowledge.`}
 
-**Context (English):**
-${contextText || "No context available."}
+**Rules:**
+- Always respond ONLY in ${detectedLang}. Do not switch to English.
+- Proper nouns, technical terms, and brand names may remain in their original form.
+- Be concise but complete.
+- Do not repeat or ask for Personally Identifiable Information.
 
+${hasContext ? `**Context (from uploaded documents):**\n${contextText}\n` : ""}
 **Conversation History:**
 ${recentMemory.map(m => `${m.role}: ${m.content}`).join("\n")}
 
