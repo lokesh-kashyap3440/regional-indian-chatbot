@@ -3,7 +3,7 @@ services:
     name: rag-grok
     runtime: node
     rootDir: .
-    buildCommand: npm install && cd client && npm install && npm run build
+    buildCommand: npm install && cd client && npm install --include=dev && npm run build
     startCommand: node server/index.js
     plan: free               # change to 'starter' or higher for paid tier
     envVars:
@@ -16,7 +16,7 @@ services:
       - key: XAI_EMBEDDING_DIM
         value: "384"         # default; change if using a different model
       - key: XAI_CHAT_MODEL
-        value: "llama-3.3-70b-versatile"
+        value: "meta-llama/llama-4-scout-17b-16e-instruct"
       - key: REDIS_URL
         sync: false          # optional — leave blank to use in-memory fallback
                              # set to your Redis connection URL if using Render Redis
