@@ -76,7 +76,7 @@ function App() {
       const decoder = new TextDecoder();
       let result = "";
 
-      setChat(prev => [...prev, { role: "assistant", content: "" }]);
+      setChat(prev => [...prev, { role: "assistant", content: "", lang: null }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -88,7 +88,14 @@ function App() {
         for (const line of lines) {
           try {
             const data = JSON.parse(line);
-            if (data.response) {
+            if (data.type === "meta" && data.lang) {
+              // First chunk: language metadata — store on the message
+              setChat(prev => {
+                const newChat = [...prev];
+                newChat[newChat.length - 1].lang = data.lang;
+                return newChat;
+              });
+            } else if (data.response) {
               result += data.response;
               setChat(prev => {
                 const newChat = [...prev];
@@ -248,9 +255,16 @@ function App() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold mb-1 opacity-70 uppercase tracking-tighter">
-                          {c.role === 'user' ? 'You' : 'Assistant'}
-                        </p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-xs font-semibold opacity-70 uppercase tracking-tighter">
+                            {c.role === 'user' ? 'You' : 'Assistant'}
+                          </p>
+                          {c.role === 'assistant' && c.lang && c.lang !== 'English' && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 bg-primary-100 text-primary-700 rounded-full leading-none">
+                              {c.lang}
+                            </span>
+                          )}
+                        </div>
                         <p className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">{c.content}</p>
                       </div>
                     </div>

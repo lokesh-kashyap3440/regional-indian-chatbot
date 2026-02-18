@@ -1,8 +1,14 @@
 const { InferenceClient } = require('@huggingface/inference');
 
+// Switched from English-only all-MiniLM-L6-v2 to a cross-lingual multilingual model.
+// paraphrase-multilingual-MiniLM-L12-v2 supports 50+ languages (Hindi, Tamil, Telugu,
+// Kannada, Malayalam, Bengali, Gujarati, Marathi, Arabic, Chinese, Japanese, Korean …)
+// and shares a 384-dim embedding space so XAI_EMBEDDING_DIM stays the same.
+// Cross-lingual property: a Hindi query can match an English document about the same topic.
+const EMBED_MODEL = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2';
+
 async function embed(text) {
   const apiKey = (process.env.HF_API_KEY || '').trim();
-  const model = 'sentence-transformers/all-MiniLM-L6-v2';
 
   if (!apiKey) {
     console.error('HF_API_KEY is not set.');
@@ -13,7 +19,7 @@ async function embed(text) {
 
   try {
     const output = await hf.featureExtraction({
-      model: model,
+      model: EMBED_MODEL,
       inputs: text,
     });
 
@@ -33,4 +39,4 @@ function simpleHash(str) {
   return hash.map(x => x / 256);
 }
 
-module.exports = { embed };
+module.exports = { embed, EMBED_MODEL };
