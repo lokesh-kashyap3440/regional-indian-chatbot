@@ -1,0 +1,8 @@
+node_modules/
+.env
+rag-grok/server/data/vector.index
+rag-grok/server/data/docs.json
+rag-grok/server/data/filenames.json
+rag-grok/server/uploads/
+dist/
+.DS_Store

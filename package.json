@@ -1,0 +1,29 @@
+{
+  "name": "rag-production",
+  "version": "2.0.0",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon",
+    "build": "npm install && cd client && npm install && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@huggingface/inference": "^4.13.12",
+    "axios": "^1.7.9",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "hnswlib-node": "^3.0.0",
+    "mammoth": "^1.11.0",
+    "multer": "^2.0.2",
+    "natural": "^8.1.0",
+    "nodemon": "^3.1.11",
+    "pdf-parse": "^1.1.1",
+    "pdf-parser": "^1.0.5",
+    "redis": "^5.11.0",
+    "tesseract.js": "^7.0.0"
+  }
+}
