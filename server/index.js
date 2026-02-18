@@ -145,7 +145,8 @@ app.post("/chat", async (req, res) => {
 });
 
 // Catch-all: serve React app for any unmatched route (SPA support)
-app.get("*", (req, res) => {
+// Express 5 requires named wildcard params instead of bare "*"
+app.get("/{*path}", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
