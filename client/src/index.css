@@ -1,6 +1,227 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Cross-Browser & Mobile Compatibility
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* CSS Reset for consistent baseline across browsers */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent iOS zoom on input focus (font-size >= 16px) */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
+  /* Smooth scrolling for all browsers */
+  scroll-behavior: smooth;
+}
+
+/* Fix mobile viewport height (addresses iOS Safari 100vh bug) */
+:root {
+  --vh: 1vh;
+}
+
+body {
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  /* Prevent overscroll bounce on iOS */
+  overscroll-behavior: none;
+  /* Font smoothing */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent horizontal scroll */
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Safe Area Insets (for notched devices - iPhone X+, Android)
+   ───────────────────────────────────────────────────────────────────────────── */
+@supports (padding: env(safe-area-inset-top)) {
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Form Elements - Cross Browser Consistency
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Remove default button styles for consistent styling */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Consistent input styling */
+input, textarea, select {
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Remove inner shadow on iOS inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  background-clip: padding-box;
+}
+
+/* Restore border-radius for our styled inputs */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  border-radius: 0.75rem;
+}
+
+/* Fix textarea resizing */
+textarea {
+  resize: none;
+  overflow: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Scrollbar Styling (WebKit browsers + Firefox)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* WebKit browsers (Chrome, Safari, Edge, Android) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+/* Hide scrollbar for mobile chat container but keep functionality */
+@media (max-width: 768px) {
+  .chat-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .chat-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Touch & Gesture Improvements
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Improve touch targets (minimum 44x44px for accessibility) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Prevent text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Enable momentum scrolling on iOS */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Animations - Cross Browser (with reduced motion support)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Apply animations with reduced motion support */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-pulse-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Respect user's reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Tailwind Utilities
+   ───────────────────────────────────────────────────────────────────────────── */
+
 @utility chat-bubble-user {
   @apply bg-primary-50 border-primary-200 text-primary-900;
 }
@@ -8,6 +229,10 @@
 @utility chat-bubble-assistant {
   @apply bg-white border-gray-200 text-gray-800;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Theme Colors
+   ───────────────────────────────────────────────────────────────────────────── */
 
 @theme {
   --color-primary-50: #eff6ff;
@@ -22,6 +247,48 @@
   --color-primary-900: #1e3a8a;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Base Styles
+   ───────────────────────────────────────────────────────────────────────────── */
+
 body {
   @apply bg-gray-50 text-gray-900;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mobile-Specific Fixes
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Fix position:fixed issues on iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  .ios-fixed {
+    position: fixed;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Prevent layout shift when keyboard opens on mobile */
+@media (max-width: 768px) {
+  .keyboard-aware {
+    position: relative;
+  }
+}
+
+/* Full-width on very small screens */
+@media (max-width: 360px) {
+  .compact-padding {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Landscape phone adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
 }
