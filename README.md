@@ -33,7 +33,6 @@ XAI_EMBEDDING_DIM=1536
    ```bash
    cd client && npm run dev
    ```
-
 ## Deployment on Render
 
 1. **Create a new Web Service** on Render.
